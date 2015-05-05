@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.innova4b.aena.modelo">
+	<class name="Avion" table="avion">
+		<id name="id" column="idAvion">
+			<generator class="native" />
+		</id>
+		<property name="modelo" column="modelo" />
+		<property name="maxPasajeros" column="max_pasajeros" />
+		<property name="horaSalida" column="hora_salida" />
+		<property name="horaLlegada" column="hora_llegada" />
+		<property name="codigoLicencia" column="codigo_licencia" />
+		<property name="estadoLicencia" column="estado_licencia" />
+		<property name="caducidadLicencia" column="caducidad_licencia" />
+
+		<set name="billetes" inverse="true" cascade="all">
+			<key column="avion_idavion" not-null="true" />
+			<one-to-many class="com.innova4b.aena.modelo.Billete" />
+		</set>
+		<many-to-one name="compania" class="com.innova4b.aena.modelo.Compania"
+			column="compania_idCompania" not-null="false" />
+		<many-to-one name="estado" class="com.innova4b.aena.modelo.Estado"
+			column="estado_idestado" not-null="false" />
+		<one-to-one name="embarque" class="com.innova4b.aena.modelo.Embarque"
+			cascade="save-update" />
+
+		<set name="rutas" table="stock_category" inverse="false"
+			lazy="true" fetch="select" cascade="all">
+			<key>
+				<column name="avion_idAvion" not-null="true" />
+			</key>
+			<many-to-many entity-name="com.innova4b.aena.modelo.Ruta">
+				<column name="ruta_idRuta" not-null="true" />
+			</many-to-many>
+		</set>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,10 @@
+package com.innova4b.aena.servicio;
+
+import java.util.List;
+
+import com.innova4b.aena.modelo.Aeropuerto;
+import com.innova4b.aena.modelo.EstadoEmbarque;
+
+public interface EstadoEmbarqueServicio {
+	public EstadoEmbarque findByNombre(String estado);
+}

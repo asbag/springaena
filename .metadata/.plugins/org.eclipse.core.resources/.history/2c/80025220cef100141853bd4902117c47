@@ -1,0 +1,84 @@
+package com.innova4b.aena.controlador;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.innova4b.aena.modelo.Aeropuerto;
+import com.innova4b.aena.servicio.AeropuertoServicio;
+import com.innova4b.aena.servicio.impl.AeropuertoServicioImpl;
+
+/**
+ * Servlet implementation class AeropuertoServlet
+ */
+public class AeropuertoServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public AeropuertoServlet() {
+		super();
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if ("/listar_aeropuertos".equals(request.getPathInfo()) || "/num_puertas".equals(request.getPathInfo())){
+			AeropuertoServicio as = new AeropuertoServicioImpl();
+			List<String> listaAeropuertos = as.obtenerAeropuertos();
+			request.getSession().setAttribute("listaAeropuertos",listaAeropuertos);
+			request.getRequestDispatcher("/WEB-INF/views/aeropuerto/listaaeropuertos.jsp").forward(request, response);
+		} else if ("/gestion".equals(request.getPathInfo())) {
+			AeropuertoServicio as = new AeropuertoServicioImpl();
+			List<Aeropuerto> listaAeropuertos = as.listarAeropuertos();
+			request.getSession().setAttribute("listAeropuertos",listaAeropuertos);
+			request.getRequestDispatcher("/WEB-INF/views/aeropuerto/gestionaeropuerto.jsp").forward(request, response);
+		}
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		if ("/seleccionado".equals(request.getPathInfo())) {
+			String aeropuerto = request.getParameter("aerop");
+			AeropuertoServicio aerServ = new AeropuertoServicioImpl();
+			int puertas = aerServ.numPuertasEmbarque(aeropuerto);
+			request.getSession().setAttribute("puertas", puertas);
+			request.getSession().setAttribute("aerop", aeropuerto);
+			request.getRequestDispatcher("/WEB-INF/views/aeropuerto/numpuertas.jsp").forward(request, response);
+		} else if ("/accion".equals(request.getPathInfo())) {
+			String act = request.getParameter("act");
+			String idAeropuerto = request.getParameter("seleccionado");
+			AeropuertoServicio aeropuertoServ = new AeropuertoServicioImpl();
+			if ("borrar".equals(act)) {
+				aeropuertoServ.borrarAeropuerto(idAeropuerto);
+				List<Aeropuerto> aeropuertos = aeropuertoServ.listarAeropuertos();
+				request.getSession().setAttribute("listAeropuertos", aeropuertos);
+				request.getRequestDispatcher("/WEB-INF/views/aeropuerto/gestionaeropuerto.jsp").forward(request, response);
+			} else if ("insertar".equals(act)){
+				request.getRequestDispatcher("/WEB-INF/views/aeropuerto/formAeropuerto.jsp").forward(request, response);
+			}
+		} else if ("/rellenado".equals(request.getPathInfo())) {
+			String nombre = request.getParameter("nombre");
+			String numPuertas = request.getParameter("num_puertas");
+			String pais = request.getParameter("pais");
+			
+			Aeropuerto aeropuerto = new Aeropuerto();
+			aeropuerto.setNombre(nombre);
+			aeropuerto.setNumPuertas(Integer.parseInt(numPuertas));
+			aeropuerto.setPais(pais);
+			AeropuertoServicio aS = new AeropuertoServicioImpl();
+			aS.insertarAeropuerto(aeropuerto);
+			List<Aeropuerto> aeropuertos = aS.listarAeropuertos();
+			request.getSession().setAttribute("listaAeropuertos", aeropuertos);
+			request.getRequestDispatcher("/WEB-INF/views/aeropuerto/gestionaeropuerto.jsp").forward(request, response);
+		}
+	}
+}

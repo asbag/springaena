@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.innova4b.aena.modelo">
+	<class name="Avion" table="avion">
+		<id name="id" column="idAvion">
+			<generator class="native" />
+		</id>
+		<property name="modelo" column="modelo" />
+		<property name="maxPasajeros" column="max_pasajeros" />
+		<property name="horaSalida" column="hora_salida" />
+		<property name="horaLlegada" column="hora_llegada" />
+		<property name="codigoLicencia" column="codigo_licencia" />
+		<property name="estadoLicencia" column="estado_licencia" />
+
+		<property name="caducidadLicencia" column="caducidad_licencia" />
+		<many-to-one name="compania" class="Compania" column="compania_idCompania"
+			not-null="true" />
+		<many-to-one name="estado" class="Estado" column="estado_idestado"
+			not-null="true" />
+	</class>
+</hibernate-mapping>
